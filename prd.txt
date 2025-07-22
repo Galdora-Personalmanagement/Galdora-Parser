@@ -1,0 +1,209 @@
+# CV PARSER UND PROFILGENERATOR: STRUKTURIERTE IMPLEMENTIERUNGSANLEITUNG
+
+## EINFÜHRUNG
+Dieses Dokument beschreibt die chronologische Reihenfolge der Aufgaben zur Implementierung des CV Parser und Profilgenerators. Die Anleitung basiert auf der umfassenden Dokumentation in new_context.md und ist darauf ausgerichtet, ein optimales Ergebnis zu erzielen.
+
+## EINSTIEGSPUNKT UND GRUNDLEGENDE STRUKTUR
+
+1. **Projektstruktur erstellen**
+   - Repositories und Verzeichnisstruktur anlegen (src/, static/, context/ etc.)
+   - Virtuelle Umgebung einrichten (Python 3.7+)
+   - requirements.txt mit notwendigen Abhängigkeiten erstellen
+   - .gitignore für sensible Daten (API-Keys etc.) konfigurieren
+
+2. **Grundlegende Abhängigkeiten installieren**
+   - Python-Abhängigkeiten installieren (streamlit, openai, PyPDF2, pdf2image, etc.)
+   - Tesseract OCR installieren (für Bildverarbeitung)
+   - Entwicklungsumgebung einrichten
+
+## KERNMODULE IMPLEMENTIEREN
+
+3. **Utility-Funktionen implementieren (src/utils/)**
+   - Konfigurationsmanagement (config.py) erstellen
+     - API-Key-Verwaltung implementieren
+     - Benutzereinstellungen-Speicherung implementieren
+   - Bildverwaltung (image_utils.py) implementieren
+     - HTTPS-kompatible Bildverarbeitung
+     - Static-Verzeichnis-Funktionalität
+
+4. **Dokumentverarbeitung implementieren (src/core/document_processor.py)**
+   - Klasse DocumentProcessor implementieren
+   - Funktionen für verschiedene Dokumenttypen erstellen:
+     - PDF-Textextraktion
+     - Bild-Textextraktion mit OCR
+     - DOCX-Textextraktion
+
+5. **KI-Extraktion implementieren (src/core/ai_extractor.py)**
+   - AIExtractor-Klasse für OpenAI-Integration erstellen
+   - Prompt-Templates für OpenAI definieren
+   - Datenextraktion und -strukturierung implementieren
+   - Chronologische Sortierung von Daten implementieren
+
+6. **Kombinierte Verarbeitung implementieren (src/core/combined_processor.py)**
+   - CombinedProcessor-Klasse erstellen
+   - Workflow für Gesamtverarbeitung implementieren
+   - Fehlerbehandlung integrieren
+
+## TEMPLATE-GENERIERUNG IMPLEMENTIEREN
+
+7. **Template-Grundstruktur erstellen (src/templates/)**
+   - ProfileGenerator-Klasse implementieren
+   - Basisklassen für verschiedene Templates definieren
+   - Gemeinsame Funktionen für alle Templates extrahieren
+
+8. **Verschiedene Template-Designs implementieren**
+   - Klassisches Design implementieren
+     - Einspaltige Standardvorlage mit Logo
+     - Profilbild-Integration
+   - Modernes Design implementieren
+     - Zweispaltiges Design (weinrot/weiß)
+     - Angepasste typografische Elemente
+   - Professionelles Design implementieren
+     - Ausgewogenes Layout mit subtiler Farbgebung
+   - Minimalistisches Design implementieren
+     - Reduziertes, klares Layout
+
+9. **Ausgabeformate implementieren**
+   - PDF-Generierung mit ReportLab implementieren
+   - DOCX-Generierung mit python-docx implementieren
+   - Gemeinsame Funktionen für Datenstrukturierung erstellen
+
+## BENUTZEROBERFLÄCHE IMPLEMENTIEREN
+
+10. **UI-Hilfsfunktionen erstellen (src/ui/utils/ui_helpers.py)**
+    - Funktionen für Sitzungsverwaltung
+    - PDF-Anzeige-Funktionalität
+    - Temporäre Verzeichnisverwaltung
+    - Drag & Drop-Editor für Berufserfahrung
+
+11. **Hauptanwendung implementieren (src/ui/app.py)**
+    - Streamlit-Hauptoberfläche erstellen
+    - Schrittweisen Workflow implementieren:
+      - Datei-Upload
+      - Datenextraktion und -bearbeitung
+      - Template-Auswahl
+      - Profil-Generierung
+    - Seitenleiste mit Einstellungen implementieren
+
+12. **Einstellungsseite implementieren (src/ui/pages/01_⚙️_Einstellungen.py)**
+    - API-Key-Verwaltung
+    - Template-Voreinstellungen
+    - Anonymisierungsoptionen
+    - Navigation zur Hauptanwendung
+
+13. **Homepage implementieren (src/ui/Home.py)**
+    - Einführung und Überblick
+    - Beschreibung der Hauptfunktionen
+    - Navigationsoptionen
+
+## ERWEITERTE FUNKTIONEN IMPLEMENTIEREN
+
+14. **Drag & Drop-Funktionalität erweitern**
+    - Implementierung der manuellen Neuordnung von Daten
+    - Session-State-Management für Benutzereinstellungen
+    - Benutzerfreundliche UI mit Pfeiltasten
+
+15. **Demo-Modus implementieren**
+    - Beispieldaten für Demo-Modus erstellen
+    - Toggle-Schalter in der Seitenleiste
+    - Funktionalität ohne API-Key ermöglichen
+
+16. **Profilbild-Unterstützung implementieren**
+    - Upload-Funktionalität für Profilbilder
+    - Bildverarbeitung und -anpassung
+    - Integration in verschiedene Templates
+
+17. **Anonymisierungsfunktion implementieren**
+    - Logik für die Anonymisierung persönlicher Daten
+    - Benutzersteuerung in der UI
+    - Konsistente Anwendung in allen Ausgabeformaten
+
+## OPTIMIERUNG UND FEHLERBEHEBUNG
+
+18. **PDF-Vorschau-Fehler beheben**
+    - TypeError bei None-Werten in st.session_state.preview_pdf beheben
+    - Robuste Fehlerbehandlung implementieren
+    - Vorschau in allen Umgebungen sicherstellen
+
+19. **Einstellungsbutton und Navigation optimieren**
+    - Korrekte Verlinkung zur Einstellungsseite
+    - Konsistente Navigation zwischen Seiten
+    - Benutzerfreundliche Interaktionselemente
+
+20. **Statusleiste implementieren**
+    - Visuelle Fortschrittsanzeige für den Benutzerworkflow
+    - Klare Darstellung des aktuellen Schritts
+    - Konsistentes Design mit Glasmorphismus-Stil
+
+21. **HTTPS-Kompatibilität sicherstellen**
+    - Bilder für HTTPS-Server optimieren
+    - Statische Dateien korrekt verwalten
+    - Deployment-Kompatibilität testen
+
+22. **Leistungsoptimierung durchführen**
+    - Code-Refactoring für Effizienz
+    - Reduzierung des API-Token-Verbrauchs
+    - Optimierung der Ladezeiten
+
+## TESTS UND DOKUMENTATION
+
+23. **Umfassende Tests durchführen**
+    - Funktionstest aller Kernkomponenten
+    - End-to-End-Tests des gesamten Workflows
+    - Kompatibilitätstests mit verschiedenen Dokumenttypen
+
+24. **Dokumentation vervollständigen**
+    - Code-Dokumentation mit Docstrings
+    - Benutzerhandbuch erstellen
+    - Installationsanleitung aktualisieren
+
+25. **Deployment vorbereiten**
+    - Deployment-Skripte erstellen
+    - Streamlit Cloud-Konfiguration
+    - Secrets-Management für API-Keys
+
+## ABHÄNGIGKEITEN UND MEILENSTEINE
+
+### Hauptabhängigkeiten:
+- Utility-Funktionen (Aufgabe 3) werden von allen anderen Modulen benötigt
+- Dokumentverarbeitung (Aufgabe 4) und KI-Extraktion (Aufgabe 5) sind Voraussetzungen für die kombinierte Verarbeitung (Aufgabe 6)
+- Alle Kernmodule (Aufgaben 3-6) sind Voraussetzungen für die Template-Generierung (Aufgaben 7-9)
+- UI-Komponenten (Aufgaben 10-13) setzen die Kernmodule und Template-Generierung voraus
+- Erweiterte Funktionen (Aufgaben 14-17) bauen auf den Grundfunktionen auf
+- Optimierung und Fehlerbehebung (Aufgaben 18-22) sollten nach der Implementierung aller Hauptfunktionen erfolgen
+
+### Kritische Meilensteine:
+1. **Grundlegende Infrastruktur** (Aufgaben 1-2)
+2. **Kernfunktionalität** (Aufgaben 3-6)
+3. **Template-Generierung** (Aufgaben 7-9)
+4. **Benutzeroberfläche** (Aufgaben 10-13)
+5. **Erweiterte Funktionen** (Aufgaben 14-17)
+6. **Optimierung und Deployment** (Aufgaben 18-25)
+
+### Prioritäten:
+- **Höchste Priorität**: Kernfunktionalität für Dokumentverarbeitung und KI-Extraktion
+- **Hohe Priorität**: Benutzerfreundliche UI und grundlegende Template-Generierung
+- **Mittlere Priorität**: Erweiterte Funktionen und verschiedene Template-Designs
+- **Niedrigere Priorität**: Optimierungen und zusätzliche Features
+
+## ZEITSCHÄTZUNG
+
+- **Grundlegende Infrastruktur**: 1-2 Tage
+- **Kernmodule**: 7-10 Tage
+- **Template-Generierung**: 5-7 Tage
+- **Benutzeroberfläche**: 5-7 Tage
+- **Erweiterte Funktionen**: 4-6 Tage
+- **Optimierung und Fehlerbehebung**: 3-5 Tage
+- **Tests und Dokumentation**: 3-4 Tage
+
+Gesamtdauer: Etwa 4-6 Wochen für eine vollständige Implementierung, abhängig von Erfahrung und vorhandenen Ressourcen.
+
+## EMPFEHLUNGEN FÜR OPTIMALE ERGEBNISSE
+
+1. **Inkrementelle Entwicklung**: Implementiere und teste jeden Schritt, bevor du zum nächsten übergehst
+2. **Frühe Integration**: Verbinde Kernmodule frühzeitig, um Integrationsprobleme zu vermeiden
+3. **Häufiges Testen**: Teste regelmäßig mit realen Dokumenten verschiedener Formate
+4. **Feedback-Schleife**: Hole frühzeitig Benutzer-Feedback zur UI und Funktionalität ein
+5. **Fokus auf Benutzerfreundlichkeit**: Priorisiere intuitive Benutzerführung und klares Design
+6. **Robuste Fehlerbehandlung**: Implementiere gründliche Fehlerbehandlung für eine stabile Anwendung
+7. **Performanceoptimierung**: Achte auf Ladezeiten und API-Nutzung für kosteneffiziente Ausführung 

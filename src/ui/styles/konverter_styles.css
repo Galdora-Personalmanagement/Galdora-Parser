@@ -1,0 +1,30 @@
+/* CV2Profile Konverter - Glasmorphismus Styles */
+
+/* Haupthintergrund */
+.main, .stApp {
+    background: linear-gradient(135deg, #4527A0, #7B1FA2) !important;
+    background-size: cover !important;
+    background-attachment: fixed !important;
+}
+
+/* Glasmorphismus-Buttons */
+button, .stButton > button, .stDownloadButton > button {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* Button Hover-Effekte */
+button:hover, .stButton > button:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Weitere Styles... */ 

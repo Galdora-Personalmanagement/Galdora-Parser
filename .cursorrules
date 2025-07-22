@@ -1,0 +1,73 @@
+# CV2Profile Parser-40 - Cursor Workflow Rules
+
+## PROJEKT-WORKFLOW AUTOMATISIERUNG
+
+### 🎯 NACH JEDER ERFOLGREICH ABGESCHLOSSENEN AUFGABE:
+
+1. **AUTOMATISCHE SUMMARY-ERSTELLUNG:**
+   - Erstelle eine neue Summary-Datei im Format `context/summary-[DD-MM-HH].md`
+   - Dokumentiere den Zeitstempel (UTC), durchgeführte Änderungen, erledigte Tasks und aufgetretene Probleme
+   - Konsolidiere die wichtigsten Erkenntnisse aus der Session
+
+2. **PROGRESS-UPDATE:**
+   - Aktualisiere `context/Progress.md` mit den neu erledigten Aufgaben
+   - Verschiebe abgeschlossene Tasks von "Offen" zu "Erledigt"
+   - Füge neue erkannte Aufgaben zu den entsprechenden Prioritätskategorien hinzu
+
+3. **PROJEKTSTRUKTUR-ÜBERPRÜFUNG:**
+   - Überprüfe `context/Projektstruktur.md` auf Änderungen in der Datei-/Ordnerstruktur
+   - Aktualisiere den Strukturbaum bei neuen Dateien, gelöschten Dateien oder Umstrukturierungen
+   - Markiere Template-Status-Änderungen oder neue Module
+
+### 🔍 VOR BEGINN JEDER NEUEN AUFGABE:
+
+1. **KONTEXT-ANALYSE:**
+   - Lese alle drei Kerndateien im `context/`-Ordner:
+     - `Projektkontext.md` (Projektübersicht und Funktionalitäten)
+     - `Projektstruktur.md` (Aktueller Aufbau und Konfiguration)
+     - `Progress.md` (Erledigte/offene Aufgaben und Prioritäten)
+
+2. **AUFGABEN-PRIORISIERUNG:**
+   - Identifiziere die Aufgabe basierend auf der Prioritäten-Matrix in Progress.md
+   - Berücksichtige Abhängigkeiten zwischen Aufgaben
+   - Verstehe den aktuellen Projektstand und verfügbare Ressourcen
+
+3. **VORBEDINGUNGEN PRÜFEN:**
+   - Überprüfe, ob alle erforderlichen Module und Dependencies verfügbar sind
+   - Stelle sicher, dass der lokale Server läuft (localhost:8501)
+   - Validiere API-Keys und Konfigurationen falls nötig
+
+### 📁 KONTEXT-ORDNER STRUKTUR (NUR DIESE 3 DATEIEN):
+
+```
+context/
+├── Projektkontext.md      # Konsolidierte Übersicht aller Summary-Informationen
+├── Projektstruktur.md     # Strukturbaum des Projekts (wird bei Änderungen aktualisiert)
+└── Progress.md            # Erledigte und offene Aufgaben mit Prioritäten
+```
+
+### 🚫 STRIKTE REGELN:
+
+- **NIEMALS** andere Dateien im `context/`-Ordner erstellen oder belassen
+- **IMMER** alle drei Kerndateien vor jeder neuen Aufgabe analysieren
+- **AUTOMATISCH** nach jeder Aufgabe eine Summary-Datei mit Timestamp erstellen
+- **KONSISTENT** die Projektstruktur nach strukturellen Änderungen aktualisieren
+- **FOKUSSIERT** nur relevante und aktuelle Informationen in den Kerndateien behalten
+
+### 💡 QUALITÄTSSICHERUNG:
+
+- **Vollständigkeit:** Jede Summary muss Zeitstempel, Änderungen, Tasks und Probleme enthalten
+- **Konsistenz:** Gleiche Formatierung und Struktur in allen Summary-Dateien
+- **Aktualität:** Progress.md muss immer den neuesten Stand aller Aufgaben widerspiegeln
+- **Klarheit:** Projektstruktur.md muss die reale Dateistruktur exakt abbilden
+
+### 🎯 WORKFLOW-EXAMPLE:
+
+1. **Start:** Lese `context/Projektkontext.md`, `context/Projektstruktur.md`, `context/Progress.md`
+2. **Work:** Führe die priorisierte Aufgabe aus
+3. **Document:** Erstelle `context/summary-[DD-MM-HH].md` mit allen Details
+4. **Update:** Aktualisiere `context/Progress.md` mit neuen erledigten Tasks
+5. **Verify:** Überprüfe und aktualisiere `context/Projektstruktur.md` bei Strukturänderungen
+6. **Clean:** Stelle sicher, dass nur die 3 Kerndateien im context/-Ordner existieren
+
+Diese Rules garantieren einen effizienten, nachverfolgbaren und fokussierten Entwicklungsworkflow für das CV2Profile Parser-40 Projekt. 

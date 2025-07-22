@@ -1,0 +1,16 @@
+{
+  "name": "Elegant",
+  "description": "Elegantes Design mit goldenen Akzenten und klassischer Typografie",
+  "primary_color": "#D4AF37",
+  "secondary_color": "#1E1E1E",
+  "accent_color": "#B8860B",
+  "background_color": "#FFFFFF",
+  "font_family": "Palatino",
+  "font_size_header": 18,
+  "font_size_body": 11,
+  "layout_type": "single_column",
+  "supports_profile_image": true,
+  "version": "1.0",
+  "author": "CV2Profile Team",
+  "created_date": "2025-06-10"
+} 

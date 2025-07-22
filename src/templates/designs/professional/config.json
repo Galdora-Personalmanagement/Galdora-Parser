@@ -1,0 +1,16 @@
+{
+  "name": "Professional",
+  "description": "Professionelles Business-Design in dunklen Grautönen",
+  "primary_color": "#4A4A4A",
+  "secondary_color": "#1E1E1E",
+  "accent_color": "#666666",
+  "background_color": "#FFFFFF",
+  "font_family": "Helvetica",
+  "font_size_header": 15,
+  "font_size_body": 10,
+  "layout_type": "single_column",
+  "supports_profile_image": true,
+  "version": "1.0",
+  "author": "CV2Profile Team",
+  "created_date": "2025-06-10"
+} 

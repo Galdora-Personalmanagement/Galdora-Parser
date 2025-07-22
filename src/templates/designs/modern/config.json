@@ -1,0 +1,16 @@
+{
+  "name": "Modern",
+  "description": "Modernes zweispaltiges Design in Weinrot/Weiß",
+  "primary_color": "#8B0000",
+  "secondary_color": "#FFFFFF",
+  "accent_color": "#B22222",
+  "background_color": "#FFFFFF",
+  "font_family": "Helvetica",
+  "font_size_header": 16,
+  "font_size_body": 10,
+  "layout_type": "two_column",
+  "supports_profile_image": true,
+  "version": "1.0",
+  "author": "CV2Profile Team",
+  "created_date": "2025-06-10"
+} 
