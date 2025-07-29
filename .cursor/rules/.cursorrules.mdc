@@ -1,73 +1,58 @@
-# CV2Profile Parser-40 - Cursor Workflow Rules
+---
+alwaysApply: true
+---
+## ✅ NACH JEDER AUFGABE
 
-## PROJEKT-WORKFLOW AUTOMATISIERUNG
+- 📄 **Summary erstellen**  
+  Erstelle `context/summary-[Nummer].md`  
+  Inhalt:  
+  - Was wurde getan?  
+  - Was hat nicht funktioniert?  
+  - Welche Dateien wurden verändert?  
+  - Welche Fehler traten auf / Lessons Learned?  
+  Ton: Informationsdicht, sachlich, README-ähnlich, 3 Absätze.
 
-### 🎯 NACH JEDER ERFOLGREICH ABGESCHLOSSENEN AUFGABE:
+- 📌 **Progress.md aktualisieren**  
+  - Tasks nach "Erledigt" verschieben  
+  - Neue Aufgaben (falls erkannt) unter "Offen" hinzufügen
 
-1. **AUTOMATISCHE SUMMARY-ERSTELLUNG:**
-   - Erstelle eine neue Summary-Datei im Format `context/summary-[DD-MM-HH].md`
-   - Dokumentiere den Zeitstempel (UTC), durchgeführte Änderungen, erledigte Tasks und aufgetretene Probleme
-   - Konsolidiere die wichtigsten Erkenntnisse aus der Session
+- 🧭 **Projektstruktur aktualisieren**  
+  - Änderungen in `context/Projektstruktur.md` spiegeln  
+  - Neue / gelöschte / verschobene Dateien eintragen
 
-2. **PROGRESS-UPDATE:**
-   - Aktualisiere `context/Progress.md` mit den neu erledigten Aufgaben. Dies ist unsere MVP-Datei
-   - Verschiebe abgeschlossene Tasks von "Offen" zu "Erledigt"
-   - Füge neue erkannte Aufgaben zu den entsprechenden Prioritätskategorien hinzu
+---
 
-3. **PROJEKTSTRUKTUR-ÜBERPRÜFUNG:**
-   - Überprüfe `context/Projektstruktur.md` auf Änderungen in der Datei-/Ordnerstruktur
-   - Aktualisiere den Strukturbaum bei neuen Dateien, gelöschten Dateien oder Umstrukturierungen
-   - Markiere Template-Status-Änderungen oder neue Module
+## 🧠 VOR JEDER AUFGABE
 
-### 🔍 VOR BEGINN JEDER NEUEN AUFGABE:
+- 🔍 **Kontextanalyse (MCP Check)**  
+  - Nutze immer MCP Context 7 zur Live-Code-Einsicht  
+  - Lese:  
+    - `context/Projektkontext.md`  
+    - `context/Projektstruktur.md`  
+    - `context/Progress.md`  
 
-1. **KONTEXT-ANALYSE:**
-   - Lese alle drei Kerndateien im `context/`-Ordner:
-     - `Projektkontext.md` (Projektübersicht und Funktionalitäten)
-     - `Projektstruktur.md` (Aktueller Aufbau und Konfiguration)
-     - `Progress.md` (Erledigte/offene Aufgaben und Prioritäten)
+- ⚙️ **Vorbedingungen prüfen**  
+  - Alle Abhängigkeiten installiert?  
+  - API-Keys & Konfiguration gültig?
 
-2. **AUFGABEN-PRIORISIERUNG:**
-   - Identifiziere die Aufgabe basierend auf der Prioritäten-Matrix in Progress.md
-   - Berücksichtige Abhängigkeiten zwischen Aufgaben
-   - Verstehe den aktuellen Projektstand und verfügbare Ressourcen
+- 🔄 **Abhängigkeiten beachten**  
+  - Aufgaben in logischer Reihenfolge abarbeiten
 
-3. **VORBEDINGUNGEN PRÜFEN:**
-   - Überprüfe, ob alle erforderlichen Module und Dependencies verfügbar sind
-   - Stelle sicher, dass der lokale Server läuft (localhost:8501)
-   - Validiere API-Keys und Konfigurationen falls nötig
+---
 
-### 📁 KONTEXT-ORDNER STRUKTUR (NUR DIESE 3 DATEIEN):
-
-```
+## 📁 context/-Ordner (nur diese Dateien erlaubt)
 context/
-├── Projektkontext.md      # Konsolidierte Übersicht aller Summary-Informationen
-├── Projektstruktur.md     # Strukturbaum des Projekts (wird bei Änderungen aktualisiert)
-└── Progress.md            # Erledigte und offene Aufgaben mit Prioritäten
-```
+├── Projektkontext.md
+├── Projektstruktur.md
+└── Progress.md
 
-### 🚫 STRIKTE REGELN:
+---
 
-- **NIEMALS** andere Dateien im `context/`-Ordner erstellen oder belassen
-- **IMMER** alle drei Kerndateien vor jeder neuen Aufgabe analysieren
-- **AUTOMATISCH** nach jeder Aufgabe eine Summary-Datei mit Timestamp erstellen
-- **KONSISTENT** die Projektstruktur nach strukturellen Änderungen aktualisieren
-- **FOKUSSIERT** nur relevante und aktuelle Informationen in den Kerndateien behalten
+## 🚨 HARTE REGELN
 
-### 💡 QUALITÄTSSICHERUNG:
-
-- **Vollständigkeit:** Jede Summary muss Zeitstempel, Änderungen, Tasks und Probleme enthalten
-- **Konsistenz:** Gleiche Formatierung und Struktur in allen Summary-Dateien
-- **Aktualität:** Progress.md muss immer den neuesten Stand aller Aufgaben widerspiegeln
-- **Klarheit:** Projektstruktur.md muss die reale Dateistruktur exakt abbilden
-
-### 🎯 WORKFLOW-EXAMPLE:
-
-1. **Start:** Lese `context/Projektkontext.md`, `context/Projektstruktur.md`, `context/Progress.md`
-2. **Work:** Führe die priorisierte Aufgabe aus
-3. **Document:** Erstelle `context/summary-[DD-MM-HH].md` mit allen Details
-4. **Update:** Aktualisiere `context/Progress.md` mit neuen erledigten Tasks
-5. **Verify:** Überprüfe und aktualisiere `context/Projektstruktur.md` bei Strukturänderungen
-6. **Clean:** Stelle sicher, dass nur die 3 Kerndateien im context/-Ordner existieren
-
-Diese Rules garantieren einen effizienten, nachverfolgbaren und fokussierten Entwicklungsworkflow für das CV2Profile Parser-40 Projekt. 
+- Keine weiteren Dateien im `context/`-Ordner
+- Immer MCP Context 7 verwenden
+- So wenig Code wie möglich schreiben
+- Immer dieselbe Struktur & Sprache einhalten
+- Nur aktuelle & relevante Infos speichern
+- Jede Datei mit vielen Hinweisen ausstatten, sodass zukünftige Entwickler es einfacher haben

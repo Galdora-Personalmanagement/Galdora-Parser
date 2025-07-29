@@ -5,4 +5,9 @@ Kernfunktionen des CV2Profile-Projekts:
 - combined_processor.py: Kombiniert Dokumentenverarbeitung und KI-Extraktion
 """ 
 
-# core Modul 
+# Explizite Imports für bessere IDE-Unterstützung
+from .document_processor import DocumentProcessor
+from .ai_extractor import AIExtractor
+from .combined_processor import CombinedProcessor
+
+__all__ = ['DocumentProcessor', 'AIExtractor', 'CombinedProcessor'] 

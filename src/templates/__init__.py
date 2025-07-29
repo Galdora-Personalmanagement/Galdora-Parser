@@ -1,6 +1,9 @@
 """
-Templates und Generatoren des CV2Profile-Projekts:
-- template_generator.py: Erstellt PDF-Profile mit ReportLab
+Template-Generation für das CV2Profile-Projekt:
+- template_generator.py: Generiert PDF-Profile aus strukturierten Daten
 """ 
 
-# templates Modul 
+# Explizite Imports für bessere IDE-Unterstützung
+from .template_generator import ProfileGenerator
+
+__all__ = ['ProfileGenerator'] 

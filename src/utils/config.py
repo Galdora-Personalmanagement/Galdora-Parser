@@ -111,17 +111,6 @@ def save_show_extracted_text(show_text):
     settings["show_extracted_text"] = show_text
     return save_settings(settings)
 
-def get_anonymize_data():
-    """Ruft die Einstellung für die Anonymisierung der Daten ab"""
-    settings = load_settings()
-    return settings.get("anonymize_data", False)
-
-def save_anonymize_data(anonymize):
-    """Speichert die Einstellung für die Anonymisierung der Daten"""
-    settings = load_settings()
-    settings["anonymize_data"] = anonymize
-    return save_settings(settings)
-
 def get_all_settings():
     """Gibt alle Einstellungen zurück"""
     return load_settings()

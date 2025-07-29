@@ -2,6 +2,7 @@ import os
 import shutil
 import streamlit as st
 from pathlib import Path
+import base64
 
 def get_image_path(image_name, use_static=False):
     """
@@ -70,4 +71,29 @@ def get_image_as_bytes(image_name):
         except Exception as e:
             print(f"Error reading image {image_name}: {e}")
     
-    return None 
+    return None
+
+def get_logo_as_base64():
+    """Load and convert the logo to base64 for embedding in HTML"""
+    try:
+        # Make sure all images are available in the static directory for HTTPS compatibility
+        ensure_images_in_static()
+        
+        # Try to find the logo using our image utility
+        # For HTTPS compatibility, use_static=True
+        logo_path = get_image_path('cv2profile-loho.png', use_static=True)
+        
+        # Fallback locations if the first path doesn't exist
+        if not os.path.exists(logo_path):
+            logo_path = get_image_path('Galdoralogo.png', use_static=True)
+        
+        if not os.path.exists(logo_path):
+            # Final fallback: return an empty string if no logo is found
+            return ""
+        
+        with open(logo_path, "rb") as f:
+            logo_data = f.read()
+            return base64.b64encode(logo_data).decode("utf-8")
+    except Exception as e:
+        print(f"Error loading logo: {e}")
+        return "" 

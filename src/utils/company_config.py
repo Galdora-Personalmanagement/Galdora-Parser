@@ -19,8 +19,12 @@ CONTACTS = {
         {"name": "Baran Gündogdu", "phone": "02161 94 99 069", "email": "gündogdu@bejob.de"}
     ],
     "galdora": [
-        {"name": "Max Mustermann", "phone": "0123 456789", "email": "mustermann@galdora.de"},
-        {"name": "Erika Musterfrau", "phone": "0123 456780", "email": "musterfrau@galdora.de"}
+        {"name": "Alessandro Böhm", "phone": "02161 6212600", "email": "boehm@galdora.de"},
+        {"name": "Kai Fischer", "phone": "02161 6212600", "email": "fischer@galdora.de"},
+        {"name": "Melike Demirkol", "phone": "02161 6212600", "email": "demirkol@galdora.de"},
+        {"name": "Konrad Rusczyk", "phone": "02161 6212600", "email": "konrad@galdora.de"},
+        {"name": "Lennard Kuss", "phone": "02161 6212600", "email": "kuss@galdora.de"},
+        {"name": "Salim Alizai", "phone": "02161 6212600", "email": "alizai@galdora.de"}
     ]
 }
 

@@ -22,9 +22,6 @@ Der CV2Profile Parser-40 ist ein leistungsstarkes KI-gestütztes Tool zur automa
 ### Benutzeroberfläche
 - **Streamlit-basiert**: Deutsche Lokalisierung mit modernem Glasmorphismus-Design
 - **3-Schritt-Workflow**: Datei hochladen → Daten bearbeiten → Profil exportieren
-- **Drag & Drop-Sortierung**: Manuelle Neuordnung von Einträgen
-- **Anonymisierungsoption**: Schutz persönlicher Daten
-- **Demo-Modus**: Funktionstest ohne API-Key
 
 ### Technische Architektur
 - **Modularer Aufbau**: Klare Trennung von Core, UI, Templates, Utils
@@ -86,3 +83,42 @@ Der CV2Profile Parser-40 ist ein leistungsstarkes KI-gestütztes Tool zur automa
 - **Professioneller Output**: Hochwertige PDF-Profile für Personalvermittlung
 - **Modulare Architektur**: Einfache Erweiterbarkeit und Wartbarkeit
 - **Datenschutz**: Lokale Verarbeitung, sichere API-Key-Speicherung, Anonymisierungsoptionen 
+
+
+Ansprechpartner Galdora:
+
+Name    Nummer  Mail
+
+Regeln: 
+Nummer ist immer: 02161 6212600
+Mail ist immer: [Name]@galdora.de
+Umlaute immer ausschreiben: ö=oe, ä=ae, etc. 
+
+Namen:
+
+Alessandro Böhm
+Kai Fischer
+Melike Demirkol
+Konrad Rusczyk
+Lennard Kuss
+Salim Alizai
+
+Ausnahmen:
+
+Email von konrad ist konrad@galdora.de
+
+---
+
+
+
+
+Ansprechpartner BeJob:
+
+Name	Nummer 	Mail
+Dirk Keulertz	02161 94 99 072	keulertz@bejob.de
+Esra Karakus	02161 94 99 080	karakus@bejob.de
+Seyla Saltimis	02161 94 99 081	satilmis@bejob.de
+Hemat Shor	02161 94 99 069	shor@bejob.de
+Daniel Fischer	02161 94 99 077	Fischer@bejob.de
+Sude Savaci	02161 94 99 082	Savasci@bejob.de
+Baran Gündogdu	02161 94 99 069	gündogdu@bejob.de

@@ -392,9 +392,10 @@ class ProfileGenerator:
         )
         
         # Persönliche Daten ausgegraut
-        elements.append(Paragraph(f"Wohnort: {personal_data.get('wohnort', '')}", grayed_style))
-        
-        # Kündigungsfrist direkt unter Wohnort platzieren
+        if personal_data.get('wohnort'):
+            elements.append(Paragraph(f"Wohnort: {personal_data.get('wohnort')}", grayed_style))
+
+        # Kündigungsfrist direkt unter Wohnort platzieren, nur wenn vorhanden
         verfuegbarkeit_status = profile_data.get('verfuegbarkeit_status', '')
         verfuegbarkeit_details = profile_data.get('verfuegbarkeit_details', '')
         if verfuegbarkeit_status:
@@ -402,28 +403,30 @@ class ProfileGenerator:
                 elements.append(Paragraph(f"ab {verfuegbarkeit_details}", grayed_style))
             else:
                 elements.append(Paragraph(f"ab {verfuegbarkeit_status}", grayed_style))
-        
-        elements.append(Paragraph(f"Jahrgang: {personal_data.get('jahrgang', '')}", grayed_style))
-        
+
+        # Jahrgang nur anzeigen, wenn vorhanden
+        if personal_data.get('jahrgang'):
+            elements.append(Paragraph(f"Jahrgang: {personal_data.get('jahrgang')}", grayed_style))
+
         # Führerschein nur anzeigen, wenn das Feld ausgefüllt ist
         fuehrerschein = personal_data.get('führerschein', '')
         if fuehrerschein and fuehrerschein.strip():
             elements.append(Paragraph(f"Führerschein: {fuehrerschein}", grayed_style))
-        
-        # Wunschgehalt (auch ausgegraut)
+
+        # Wunschgehalt (auch ausgegraut), nur wenn vorhanden
         wunschgehalt = profile_data.get('wunschgehalt', '')
         if wunschgehalt:
             elements.append(Paragraph(f"Gehaltsvorstellung: {wunschgehalt}", grayed_style))
-        
+
         # NEU: Vergrößerter Abstand nach Profilinfos
         elements.append(Spacer(1, 12))  # Erhöht von 6 auf 12
-        
-        # Ansprechpartner Block (jetzt nach dem Profil)
+
+        # Ansprechpartner Block (jetzt nach dem Profil), nur wenn vorhanden
         kontakt = personal_data.get('kontakt', {})
         ansprechpartner = kontakt.get('ansprechpartner', '')
-        
-        # GEÄNDERT: Trennlinie nur anzeigen, wenn ein Ansprechpartner vorhanden ist
-        if ansprechpartner and ansprechpartner != "Kein Ansprechpartner":
+
+        # GEÄNDERT: Trennlinie nur anzeigen, wenn ein Ansprechpartner vorhanden ist und nicht "Kein Ansprechpartner"
+        if ansprechpartner and ansprechpartner.strip() and ansprechpartner != "Kein Ansprechpartner":
             # Trennlinie vor dem Ansprechpartner
             elements.append(HRFlowable(
                 width="100%",
