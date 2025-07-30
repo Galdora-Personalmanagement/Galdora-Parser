@@ -7,6 +7,12 @@ from PIL import Image
 import sys
 import atexit
 
+# Setze den Projekt-Root-Pfad explizit, damit alle Module gefunden werden
+# Dies ist eine robustere Methode, die in allen Umgebungen (lokal, Cloud) funktioniert
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 # Importe aus den Modulen
 from src.core.document_processor import DocumentProcessor
 from src.core.ai_extractor import AIExtractor  
