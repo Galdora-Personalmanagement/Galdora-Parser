@@ -4,6 +4,11 @@ import streamlit as st
 from pathlib import Path
 import base64
 
+# Definiert den absoluten Pfad zum Projekt-Root
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+STATIC_DIR = os.path.join(BASE_DIR, 'static', 'images')
+SOURCES_DIR = os.path.join(BASE_DIR, 'sources')
+
 def get_image_path(image_name, use_static=False):
     """
     Gibt den Pfad zu einem Bild zurück.
@@ -15,18 +20,15 @@ def get_image_path(image_name, use_static=False):
     Returns:
         String mit dem Pfad zum Bild
     """
-    # Prüfe, ob das Bild im static-Verzeichnis verwendet werden soll
     if use_static:
-        static_path = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'static', 'images', image_name)
+        static_path = os.path.join(STATIC_DIR, image_name)
         if os.path.exists(static_path):
             return static_path
     
-    # Versuche das Bild im sources-Verzeichnis zu finden
-    source_path = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'sources', image_name)
+    source_path = os.path.join(SOURCES_DIR, image_name)
     if os.path.exists(source_path):
         return source_path
     
-    # Wenn kein Pfad gefunden wurde, gib einen leeren String zurück
     return ""
 
 def ensure_images_in_static():
@@ -34,20 +36,13 @@ def ensure_images_in_static():
     Stellt sicher, dass alle Bilder aus dem sources-Verzeichnis auch im static/images-Verzeichnis vorhanden sind.
     Dies ist wichtig für die HTTPS-Kompatibilität.
     """
-    # Definiere die Verzeichnispfade
-    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    sources_dir = os.path.join(base_dir, 'sources')
-    static_images_dir = os.path.join(base_dir, 'static', 'images')
+    os.makedirs(STATIC_DIR, exist_ok=True)
     
-    # Stelle sicher, dass das Zielverzeichnis existiert
-    os.makedirs(static_images_dir, exist_ok=True)
-    
-    # Kopiere alle Bilder aus dem sources-Verzeichnis in das static/images-Verzeichnis
-    if os.path.exists(sources_dir):
-        for filename in os.listdir(sources_dir):
-            file_path = os.path.join(sources_dir, filename)
+    if os.path.exists(SOURCES_DIR):
+        for filename in os.listdir(SOURCES_DIR):
+            file_path = os.path.join(SOURCES_DIR, filename)
             if os.path.isfile(file_path) and filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                dest_path = os.path.join(static_images_dir, filename)
+                dest_path = os.path.join(STATIC_DIR, filename)
                 if not os.path.exists(dest_path) or os.path.getmtime(file_path) > os.path.getmtime(dest_path):
                     shutil.copy2(file_path, dest_path)
                     print(f"Kopiert: {filename} nach static/images/")
@@ -76,19 +71,14 @@ def get_image_as_bytes(image_name):
 def get_logo_as_base64():
     """Load and convert the logo to base64 for embedding in HTML"""
     try:
-        # Make sure all images are available in the static directory for HTTPS compatibility
         ensure_images_in_static()
         
-        # Try to find the logo using our image utility
-        # For HTTPS compatibility, use_static=True
         logo_path = get_image_path('cv2profile-loho.png', use_static=True)
         
-        # Fallback locations if the first path doesn't exist
         if not os.path.exists(logo_path):
             logo_path = get_image_path('Galdoralogo.png', use_static=True)
         
         if not os.path.exists(logo_path):
-            # Final fallback: return an empty string if no logo is found
             return ""
         
         with open(logo_path, "rb") as f:
@@ -96,4 +86,4 @@ def get_logo_as_base64():
             return base64.b64encode(logo_data).decode("utf-8")
     except Exception as e:
         print(f"Error loading logo: {e}")
-        return "" 
+        return ""

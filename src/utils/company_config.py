@@ -5,7 +5,9 @@ import os
 from typing import Dict, Any, List
 
 # Basis-Pfad für Assets
-STATIC_PATH = "static/images"
+# Definiert den absoluten Pfad zum Projekt-Root
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+STATIC_PATH = os.path.join(BASE_DIR, "static", "images")
 
 # Ansprechpartner-Definitionen
 CONTACTS = {
