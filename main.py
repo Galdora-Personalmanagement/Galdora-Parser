@@ -833,6 +833,11 @@ if st.session_state.step == 1:
         """, unsafe_allow_html=True)
     
     # Prüfen, ob File und API Key vorhanden sind
+    if uploaded_file and not openai_api_key:
+        st.error("🚨 Kein OpenAI API-Key gefunden. Bitte hinterlegen Sie Ihren Key in den Streamlit Cloud Secrets.")
+        st.info("Klicken Sie auf 'Manage app' → 'Settings' → 'Secrets' und fügen Sie `openai_api_key = 'sk-...'` hinzu.")
+    
+    # Prüfen, ob File und API Key vorhanden sind
     if uploaded_file and openai_api_key:
             with st.spinner("Datei wird verarbeitet..."):
                 # Temporäre Datei erstellen
