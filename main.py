@@ -7,19 +7,16 @@ from PIL import Image
 import sys
 import atexit
 
-# Füge das 'src'-Verzeichnis zum Python-Pfad hinzu, damit alle Module gefunden werden
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-
 # Importe aus den Modulen
-from core.document_processor import DocumentProcessor
-from core.ai_extractor import AIExtractor  
-from core.combined_processor import CombinedProcessor
-from templates.template_generator import ProfileGenerator
-import utils.config as config
-from utils.image_utils import get_image_path, ensure_images_in_static, get_logo_as_base64
-from utils.company_config import get_available_companies, get_company_config, get_company_logo_path, get_company_contacts
-from utils.pdf_viewer import display_pdf_with_pdfjs
-from ui.styles.main_styles import custom_css
+from src.core.document_processor import DocumentProcessor
+from src.core.ai_extractor import AIExtractor  
+from src.core.combined_processor import CombinedProcessor
+from src.templates.template_generator import ProfileGenerator
+import src.utils.config as config
+from src.utils.image_utils import get_image_path, ensure_images_in_static, get_logo_as_base64
+from src.utils.company_config import get_available_companies, get_company_config, get_company_logo_path, get_company_contacts
+from src.utils.pdf_viewer import display_pdf_with_pdfjs
+from src.ui.styles.main_styles import custom_css
 
 
 # CSS für Farbverlaufshintergrund und weiße Schaltflächen
