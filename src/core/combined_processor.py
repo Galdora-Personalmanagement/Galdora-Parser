@@ -165,28 +165,59 @@ class CombinedProcessor:
         except Exception as e:
             print(f"Fehler bei direkter PDF-Textextraktion: {str(e)}")
         
-        # Falls kein oder wenig Text extrahiert wurde, OCR verwenden
+        # Falls kein oder wenig Text extrahiert wurde, OCR verwenden (speicherschonend, seitenweise, ohne Threads)
         if len(text.strip()) < 100:  # Heuristik: Weniger als 100 Zeichen bedeutet wahrscheinlich ein Scan
             try:
-                # PDF in Bilder umwandeln mit höherer DPI für bessere OCR-Ergebnisse
-                images = convert_from_path(file_path, dpi=300)
-                
-                # Parallele OCR-Verarbeitung für mehrere Seiten
-                with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
-                    future_to_image = {executor.submit(self._perform_ocr, image): i for i, image in enumerate(images)}
-                    
-                    # Resultate sammeln
-                    page_texts = [""] * len(images)
-                    for future in concurrent.futures.as_completed(future_to_image):
-                        page_idx = future_to_image[future]
+                from pdf2image import pdfinfo_from_path
+                import tempfile
+                info = pdfinfo_from_path(file_path)
+                num_pages = int(info.get('Pages', 0))
+                collected = []
+                if num_pages == 0:
+                    images = convert_from_path(file_path, dpi=200, thread_count=1)
+                    for image in images:
                         try:
-                            page_texts[page_idx] = future.result()
-                        except Exception as e:
-                            print(f"Fehler bei OCR für Seite {page_idx}: {str(e)}")
-                
-                # Texte zusammenführen
-                text = "\n".join(page_texts)
-                
+                            collected.append(self._perform_ocr(image))
+                        finally:
+                            try:
+                                image.close()
+                            except Exception:
+                                pass
+                else:
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        for page in range(1, num_pages + 1):
+                            try:
+                                paths = convert_from_path(
+                                    file_path,
+                                    dpi=200,
+                                    first_page=page,
+                                    last_page=page,
+                                    output_folder=tmpdir,
+                                    fmt='png',
+                                    thread_count=1,
+                                    paths_only=True
+                                )
+                                if not paths:
+                                    continue
+                                img_path = paths[0]
+                                from PIL import Image as PILImage
+                                img = None
+                                try:
+                                    img = PILImage.open(img_path)
+                                    collected.append(self._perform_ocr(img))
+                                finally:
+                                    try:
+                                        img and img.close()
+                                    except Exception:
+                                        pass
+                                    try:
+                                        os.remove(img_path)
+                                    except Exception:
+                                        pass
+                            except Exception as per_page_err:
+                                print(f"Fehler bei PDF-OCR (Seite {page}): {per_page_err}")
+                                continue
+                text = "\n".join(collected)
             except Exception as e:
                 print(f"Fehler bei PDF-OCR: {str(e)}")
                 # Wenn auch OCR fehlschlägt, zurückgeben was wir haben
@@ -198,8 +229,14 @@ class CombinedProcessor:
         # Bild für bessere OCR-Ergebnisse vorverarbeiten
         image = self._preprocess_image(image)
         # OCR für deutsche Dokumente
-        text = pytesseract.image_to_string(image, lang='deu', config='--psm 1 --oem 3')
-        return text
+        try:
+            text = pytesseract.image_to_string(image, lang='deu', config='--psm 1 --oem 3')
+            return text
+        finally:
+            try:
+                image.close()
+            except Exception:
+                pass
     
     def _preprocess_image(self, image):
         """Optimiert Bilder für bessere OCR-Ergebnisse"""

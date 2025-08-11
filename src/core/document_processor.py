@@ -44,14 +44,60 @@ class DocumentProcessor:
         except Exception as e:
             print(f"Fehler bei direkter PDF-Textextraktion: {str(e)}")
         
-        # Falls kein oder wenig Text extrahiert wurde, OCR verwenden
+        # Falls kein oder wenig Text extrahiert wurde, OCR verwenden (speicherschonend, seitenweise)
         if len(text.strip()) < 100:  # Heuristik: Weniger als 100 Zeichen bedeutet wahrscheinlich ein Scan
             try:
-                # PDF in Bilder umwandeln und OCR durchführen
-                images = convert_from_path(file_path)
-                for i, image in enumerate(images):
-                    page_text = pytesseract.image_to_string(image, lang='deu')  # Deutsch für deutsche Dokumente
-                    text += page_text + "\n"
+                from pdf2image import pdfinfo_from_path
+                import tempfile
+                info = pdfinfo_from_path(file_path)
+                num_pages = int(info.get('Pages', 0))
+                if num_pages == 0:
+                    # Fallback: Einmalige Konvertierung versuchen
+                    images = convert_from_path(file_path, dpi=200, thread_count=1)
+                    for image in images:
+                        try:
+                            page_text = pytesseract.image_to_string(image, lang='deu')
+                            text += page_text + "\n"
+                        finally:
+                            try:
+                                image.close()
+                            except Exception:
+                                pass
+                else:
+                    # Seitenweise konvertieren, um RAM zu sparen
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        for page in range(1, num_pages + 1):
+                            try:
+                                paths = convert_from_path(
+                                    file_path,
+                                    dpi=200,
+                                    first_page=page,
+                                    last_page=page,
+                                    output_folder=tmpdir,
+                                    fmt='png',
+                                    thread_count=1,
+                                    paths_only=True
+                                )
+                                if not paths:
+                                    continue
+                                img_path = paths[0]
+                                try:
+                                    from PIL import Image as PILImage
+                                    img = PILImage.open(img_path)
+                                    page_text = pytesseract.image_to_string(img, lang='deu')
+                                    text += page_text + "\n"
+                                finally:
+                                    try:
+                                        img.close()
+                                    except Exception:
+                                        pass
+                                    try:
+                                        os.remove(img_path)
+                                    except Exception:
+                                        pass
+                            except Exception as per_page_err:
+                                print(f"Fehler bei PDF-OCR (Seite {page}): {per_page_err}")
+                                continue
             except Exception as e:
                 print(f"Fehler bei PDF-OCR: {str(e)}")
                 # Wenn auch OCR fehlschlägt, zurückgeben was wir haben
@@ -67,6 +113,11 @@ class DocumentProcessor:
             return text
         except Exception as e:
             raise Exception(f"Fehler bei der Bildverarbeitung: {str(e)}")
+        finally:
+            try:
+                image.close()
+            except Exception:
+                pass
     
     def _extract_from_docx(self, file_path):
         """Extrahiert Text aus Word-Dokumenten"""

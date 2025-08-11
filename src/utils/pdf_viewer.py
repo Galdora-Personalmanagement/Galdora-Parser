@@ -29,8 +29,14 @@ def create_pdfjs_viewer(pdf_path: str, height: int = 600) -> str:
     
     # PDF-Datei als Base64 einlesen
     try:
-        with open(pdf_path, "rb") as pdf_file:
-            pdf_base64 = base64.b64encode(pdf_file.read()).decode()
+        # Streamlit Cloud has tight RAM; avoid loading entire PDF when large.
+        # Cap embedded preview to first ~10MB; if larger, show iframe fallback without base64.
+        file_size = os.path.getsize(pdf_path)
+        if file_size > 10 * 1024 * 1024:
+            pdf_base64 = None
+        else:
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_base64 = base64.b64encode(pdf_file.read()).decode()
     except Exception as e:
         return f"""
         <div style="text-align: center; padding: 20px; background-color: #f8d7da; color: #721c24; border-radius: 5px;">
@@ -171,13 +177,13 @@ def create_pdfjs_viewer(pdf_path: str, height: int = 600) -> str:
         <!-- PDF.js from CDN mit Fallback -->
         <script>
             // Fallback für Streamlit Cloud: Einfachere PDF-Darstellung ohne externe CDNs
-            if (typeof pdfjsLib === 'undefined') {{
+            if (typeof pdfjsLib === 'undefined' || {str(pdf_base64 is None).lower()}) {{
                 // Direkter Iframe-Fallback für bessere Kompatibilität
                 document.addEventListener('DOMContentLoaded', function() {{
                     const pdfViewer = document.getElementById('pdfViewer');
                     pdfViewer.innerHTML = `
                         <iframe 
-                            src="data:application/pdf;base64,{pdf_base64}" 
+                            src={"'data:application/pdf;base64," + pdf_base64 + "'" if pdf_base64 else f"'file://{pdf_path}'"} 
                             width="100%" 
                             height="100%" 
                             style="border: none; background: white;"
@@ -202,7 +208,7 @@ def create_pdfjs_viewer(pdf_path: str, height: int = 600) -> str:
         
         <script>
             // PDF.js Konfiguration mit Fallback
-            if (typeof pdfjsLib !== 'undefined') {{
+            if (typeof pdfjsLib !== 'undefined' && {str(pdf_base64 is not None).lower()}) {{
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
             }}
             
@@ -219,11 +225,11 @@ def create_pdfjs_viewer(pdf_path: str, height: int = 600) -> str:
             const VIEWER_HEIGHT = {viewer_height - 120}; // Container-Höhe minus Controls und Padding
             
             // Base64 PDF-Daten
-            const pdfData = atob('{pdf_base64}');
+            const pdfData = { 'null' if pdf_base64 is None else "atob('" + pdf_base64 + "')" };
             
             // PDF laden mit Fallback
             async function loadPDF() {{
-                if (typeof pdfjsLib === 'undefined') {{
+                if (typeof pdfjsLib === 'undefined' || pdfData === null) {{
                     // Aktiviere den iframe-Fallback
                     activateIframeFallback();
                     return;
