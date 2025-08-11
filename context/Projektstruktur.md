@@ -24,6 +24,7 @@ CV2Profile Parser-40/
 │   ├── Projektkontext.md           # Umfassende Projektübersicht
 │   ├── Projektstruktur.md          # Diese Datei - Deployment-ready Struktur
 │   ├── Progress.md                 # 100% Erledigte und abgeschlossene Aufgaben
+│   ├── summary-11-08-11.md         # Automatische Summary (UTC)
 │   ├── summary-29-07-13.md         # Code-Bereinigung & Refactoring
 │   ├── summary-29-07-14.md         # UI-Erweiterung (Leere Profilvorlage)
 │   ├── summary-29-07-15.md         # GitHub Deployment & Streamlit Vorbereitung
