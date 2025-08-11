@@ -2,7 +2,7 @@
 
 ## 🚀 **GitHub Repository & Deployment**
 
-**Repository:** https://github.com/jjokkln/galdora-converter.git  
+**Repository:** https://github.com/Galdora-Personalmanagement/Galdora-Parser.git  
 **Branch:** main  
 **Live-URL:** https://galdora-converter.streamlit.app  
 **Status:** ✅ **100% Deployment-Ready**
@@ -33,10 +33,13 @@ CV2Profile Parser-40/
 │   ├── core/                      # Kernfunktionalität
 │   │   ├── document_processor.py  # Dokumentenverarbeitung (PDF, DOCX, Bilder)
 │   │   ├── ai_extractor.py        # KI-gestützte Extraktion (OpenAI)
-│   │   └── combined_processor.py  # Kombinierte Verarbeitungslogik
+│   │   ├── combined_processor.py  # Kombinierte Verarbeitungslogik
+│   │   ├── config_manager.py      # Zentralisierte Konfigurationsverwaltung (NEU)
+│   │   └── error_handler.py       # Standardisierte Fehlerbehandlung (NEU)
 │   │
 │   ├── templates/                 # Template-Generierung (5 Designs)
 │   │   ├── template_generator.py  # PDF & Word-Profilgenerierung (ReportLab)
+│   │   ├── base_template.py       # Basis-Template-Klassen (Code-Deduplication) (NEU)
 │   │   └── designs/               # Design-Vorlagen
 │   │       ├── classic/           # Klassisches einspaltige Layout
 │   │       │   └── config.json
@@ -50,8 +53,12 @@ CV2Profile Parser-40/
 │   │           └── config.json
 │   │
 │   ├── ui/                        # Benutzeroberfläche (Streamlit)
+│   │   ├── components/            # UI-Komponenten (Modular) (NEU)
+│   │   │   ├── cv_data_editor.py  # CV-Daten-Editor (aus main.py extrahiert) (NEU)
+│   │   │   └── __init__.py
 │   │   └── styles/                # CSS und Styling (Glasmorphismus)
 │   │       ├── main_styles.py     # Zentrale CSS-Definitionen
+│   │       ├── css_handler.py     # Sichere CSS-Verarbeitung (XSS-Schutz) (NEU)
 │   │       └── __init__.py
 │   │
 │   └── utils/                     # Hilfsfunktionen & Konfiguration
@@ -112,7 +119,7 @@ libglib2.0-0          # GLib-Bibliothek
 ```
 
 ### **Streamlit Cloud Konfiguration:**
-- **Repository**: https://github.com/jjokkln/galdora-converter.git
+- **Repository**: https://github.com/Galdora-Personalmanagement/Galdora-Parser.git
 - **Branch**: main
 - **Entry Point**: streamlit_app.py
 - **Python Version**: 3.9+
@@ -158,7 +165,7 @@ libglib2.0-0          # GLib-Bibliothek
 - **Auto-Scaling Ready**: Stateless Design für horizontale Skalierung
 
 ### **Deployment-Bereitschaft:**
-- **GitHub Repository**: ✅ Live auf https://github.com/jjokkln/galdora-converter.git
+- **GitHub Repository**: ✅ Live auf https://github.com/Galdora-Personalmanagement/Galdora-Parser.git
 - **Streamlit Cloud Ready**: ✅ Entry Point und Dependencies konfiguriert
 - **HTTPS-Kompatibilität**: ✅ Statische Bildverwaltung implementiert
 - **API-Integration**: ✅ OpenAI Secrets-Management vorbereitet

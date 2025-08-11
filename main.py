@@ -24,6 +24,12 @@ from src.utils.company_config import get_available_companies, get_company_config
 from src.utils.pdf_viewer import display_pdf_with_pdfjs
 from src.ui.styles.main_styles import custom_css
 
+# New modular imports
+from src.ui.components.cv_data_editor import CVDataEditor
+from src.core.error_handler import ErrorHandler, safe_executor
+from src.ui.styles.css_handler import SecureCSS, ThemeManager, ComponentStyler
+from src.core.config_manager import ValidationRules, PathManager
+
 
 # CSS für Farbverlaufshintergrund und weiße Schaltflächen
 # (Ausgelagert nach src/ui/styles/main_styles.py)
@@ -48,187 +54,10 @@ if 'saved_api_key' not in st.session_state:
 
 
 
-# Hilfsfunktionen
-def create_cv_data_editor(profile_data):
-    """
-    Listen-basierte Bearbeitung von CV-Daten mit Pfeil-Navigation
-    Arbeitet direkt mit Session State für persistente Speicherung
-    
-    Args:
-        profile_data: Dictionary mit CV-Daten
-    
-    Returns:
-        Dictionary mit bearbeiteten CV-Daten
-    """
-    
-    # Session State für CV-Daten initialisieren falls noch nicht vorhanden
-    if 'cv_berufserfahrung' not in st.session_state:
-        st.session_state.cv_berufserfahrung = profile_data.get("berufserfahrung", [])
-    if 'cv_ausbildung' not in st.session_state:
-        st.session_state.cv_ausbildung = profile_data.get("ausbildung", [])
-    if 'cv_weiterbildungen' not in st.session_state:
-        st.session_state.cv_weiterbildungen = profile_data.get("weiterbildungen", [])
-    
-    def move_item_up(session_key, index):
-        """Verschiebt ein Element nach oben in der Session State"""
-        items = st.session_state[session_key]
-        if index > 0:
-            items[index], items[index-1] = items[index-1], items[index]
-            st.session_state[session_key] = items
-    
-    def move_item_down(session_key, index):
-        """Verschiebt ein Element nach unten in der Session State"""
-        items = st.session_state[session_key]
-        if index < len(items) - 1:
-            items[index], items[index+1] = items[index+1], items[index]
-            st.session_state[session_key] = items
-    
-    # Berufserfahrung Editor
-    st.markdown("### 🏢 Berufserfahrung")
-    
-    # Add new entry button
-    if st.button("➕ Neue Berufserfahrung hinzufügen"):
-        st.session_state.cv_berufserfahrung.append({
-            "zeitraum": "",
-            "unternehmen": "",
-            "position": "",
-            "aufgaben": []
-        })
-        st.rerun()
-    
-    # Alle Berufserfahrungen untereinander anzeigen
-    if st.session_state.cv_berufserfahrung:
-        for i, entry in enumerate(st.session_state.cv_berufserfahrung):
-            with st.container():
-                # Navigations- und Aktions-Buttons links, Inhalt rechts
-                col_nav, col_content = st.columns([1, 9])
-                
-                with col_nav:
-                    # Pfeil-Buttons untereinander für kompakte Darstellung
-                    if st.button("⬆️", key=f"be_up_{i}", disabled=(i == 0), help="Nach oben verschieben", use_container_width=True):
-                        move_item_up('cv_berufserfahrung', i)
-                        st.rerun()
-                    if st.button("⬇️", key=f"be_down_{i}", disabled=(i == len(st.session_state.cv_berufserfahrung) - 1), help="Nach unten verschieben", use_container_width=True):
-                        move_item_down('cv_berufserfahrung', i)
-                        st.rerun()
-                    if st.button("🗑️", key=f"delete_be_{i}", help="Eintrag löschen", use_container_width=True):
-                        st.session_state.cv_berufserfahrung.pop(i)
-                        st.rerun()
-                
-                with col_content:
-                    # Input-Felder für den Eintrag
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        entry["zeitraum"] = st.text_input("Zeitraum", value=entry.get("zeitraum", ""), key=f"be_zeitraum_{i}")
-                        entry["unternehmen"] = st.text_input("Unternehmen", value=entry.get("unternehmen", ""), key=f"be_unternehmen_{i}")
-                    with col2:
-                        entry["position"] = st.text_input("Position", value=entry.get("position", ""), key=f"be_position_{i}")
-                        
-                        # Aufgaben als mehrzeiliger Text - immer voll ausgeklappt anzeigen
-                        aufgaben_text = '\n'.join(entry.get("aufgaben", [])) if isinstance(entry.get("aufgaben"), list) else str(entry.get("aufgaben", ""))
-                        aufgaben_input = st.text_area("Aufgaben (eine pro Zeile)", value=aufgaben_text, key=f"be_aufgaben_{i}", height=150)
-                        entry["aufgaben"] = [a.strip() for a in aufgaben_input.split('\n') if a.strip()]
-                
-                st.divider()
-    
-    st.divider()
-    
-    # Ausbildung Editor
-    st.markdown("### 🎓 Ausbildung")
-    
-    # Add new entry button
-    if st.button("➕ Neue Ausbildung hinzufügen"):
-        st.session_state.cv_ausbildung.append({
-            "zeitraum": "",
-            "institution": "",
-            "abschluss": "",
-            "note": "",
-            "schwerpunkte": ""
-        })
-        st.rerun()
-    
-    # Alle Ausbildungen untereinander anzeigen
-    if st.session_state.cv_ausbildung:
-        for i, entry in enumerate(st.session_state.cv_ausbildung):
-            with st.container():
-                # Navigations- und Aktions-Buttons links, Inhalt rechts
-                col_nav, col_content = st.columns([1, 9])
-                
-                with col_nav:
-                    # Pfeil-Buttons untereinander für kompakte Darstellung
-                    if st.button("⬆️", key=f"edu_up_{i}", disabled=(i == 0), help="Nach oben verschieben", use_container_width=True):
-                        move_item_up('cv_ausbildung', i)
-                        st.rerun()
-                    if st.button("⬇️", key=f"edu_down_{i}", disabled=(i == len(st.session_state.cv_ausbildung) - 1), help="Nach unten verschieben", use_container_width=True):
-                        move_item_down('cv_ausbildung', i)
-                        st.rerun()
-                    if st.button("🗑️", key=f"delete_edu_{i}", help="Eintrag löschen", use_container_width=True):
-                        st.session_state.cv_ausbildung.pop(i)
-                        st.rerun()
-                
-                with col_content:
-                    # Input-Felder für den Eintrag
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        entry["zeitraum"] = st.text_input("Zeitraum", value=entry.get("zeitraum", ""), key=f"edu_zeitraum_{i}")
-                        entry["institution"] = st.text_input("Institution", value=entry.get("institution", ""), key=f"edu_institution_{i}")
-                        entry["abschluss"] = st.text_input("Abschluss", value=entry.get("abschluss", ""), key=f"edu_abschluss_{i}")
-                    with col2:
-                        entry["note"] = st.text_input("Note", value=entry.get("note", ""), key=f"edu_note_{i}")
-                        entry["schwerpunkte"] = st.text_area("Schwerpunkte", value=entry.get("schwerpunkte", ""), key=f"edu_schwerpunkte_{i}", height=150)
-                
-                st.divider()
-    
-    st.divider()
-    
-    # Weiterbildungen Editor
-    st.markdown("### 📚 Weiterbildungen")
-    
-    # Add new entry button
-    if st.button("➕ Neue Weiterbildung hinzufügen"):
-        st.session_state.cv_weiterbildungen.append({
-            "zeitraum": "",
-            "bezeichnung": "",
-            "abschluss": ""
-        })
-        st.rerun()
-    
-    # Alle Weiterbildungen untereinander anzeigen
-    if st.session_state.cv_weiterbildungen:
-        for i, entry in enumerate(st.session_state.cv_weiterbildungen):
-            with st.container():
-                # Navigations- und Aktions-Buttons links, Inhalt rechts
-                col_nav, col_content = st.columns([1, 9])
-                
-                with col_nav:
-                    # Pfeil-Buttons untereinander für kompakte Darstellung
-                    if st.button("⬆️", key=f"wb_up_{i}", disabled=(i == 0), help="Nach oben verschieben", use_container_width=True):
-                        move_item_up('cv_weiterbildungen', i)
-                        st.rerun()
-                    if st.button("⬇️", key=f"wb_down_{i}", disabled=(i == len(st.session_state.cv_weiterbildungen) - 1), help="Nach unten verschieben", use_container_width=True):
-                        move_item_down('cv_weiterbildungen', i)
-                        st.rerun()
-                    if st.button("🗑️", key=f"delete_wb_{i}", help="Eintrag löschen", use_container_width=True):
-                        st.session_state.cv_weiterbildungen.pop(i)
-                        st.rerun()
-                
-                with col_content:
-                    # Input-Felder für den Eintrag
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        entry["zeitraum"] = st.text_input("Zeitraum", value=entry.get("zeitraum", ""), key=f"wb_zeitraum_{i}")
-                        entry["bezeichnung"] = st.text_input("Bezeichnung", value=entry.get("bezeichnung", ""), key=f"wb_bezeichnung_{i}")
-                    with col2:
-                        entry["abschluss"] = st.text_input("Abschluss/Details", value=entry.get("abschluss", ""), key=f"wb_abschluss_{i}")
-                
-                st.divider()
-    
-    # Rückgabe der aktuellen Session State Daten
-    return {
-        'berufserfahrung': st.session_state.cv_berufserfahrung,
-        'ausbildung': st.session_state.cv_ausbildung,
-        'weiterbildungen': st.session_state.cv_weiterbildungen
-    }
+# Initialize CV Data Editor instance
+cv_editor = CVDataEditor()
+
+# Note: create_cv_data_editor function removed - functionality moved to CVDataEditor class
 
 
 
@@ -238,8 +67,13 @@ st.set_page_config(page_title="CV2Profile Konverter", layout="wide")
 # Stelle sicher, dass alle Bilder im static-Verzeichnis verfügbar sind für HTTPS-Kompatibilität
 ensure_images_in_static()
 
-# CSS einbinden
-st.markdown(custom_css, unsafe_allow_html=True)
+# CSS einbinden - securely
+ThemeManager.apply_main_theme()
+# Apply validated custom CSS
+try:
+    st.markdown(custom_css, unsafe_allow_html=True)  # TODO: Replace with SecureCSS validation
+except Exception as e:
+    ErrorHandler.handle_unexpected_error(e, "CSS-Anwendung")
 
 # Header-Bereich mit verbessertem Glasmorphismus-Effekt
 # CSS zum Verstecken der Seitenleiste
@@ -564,44 +398,40 @@ if st.session_state.step == 1:
                     # E-Mail-Adresse anzeigen
                     st.text_input("E-Mail", value=email, disabled=True, key="empty_email")
                 
-                # CV-Daten-Editor mit eindeutigen Keys
+                # CV-Daten-Editor mit modularer Architektur
                 
-                # Bereite die Daten vor
-                cv_data = {
-                    'berufserfahrung': profile_data.get("berufserfahrung", []),
-                    'ausbildung': profile_data.get("ausbildung", []),
-                    'weiterbildungen': profile_data.get("weiterbildungen", [])
+                # Initialize CV data in session state
+                cv_editor.initialize_session_state(profile_data)
+                
+                # Render CV editing sections
+                cv_editor.render_experience_editor()
+                cv_editor.render_education_editor() 
+                cv_editor.render_training_editor()
+                
+                # Consolidate data using the modular CVDataEditor
+                personal_data_consolidated = {
+                    "name": edited_data.get("name", ""),
+                    "wohnort": edited_data.get("wohnort", ""),
+                    "jahrgang": edited_data.get("jahrgang", ""),
+                    "führerschein": edited_data.get("führerschein", ""),
+                    "wunschgehalt": edited_data.get("wunschgehalt", "")
                 }
-                
-                # Dropdown-basierter CV-Editor
-                edited_cv_data = create_cv_data_editor(cv_data)
-                
-                # Aktualisierte Daten aus Session State verwenden (für persistente Sortierung)
-                all_experience = st.session_state.get('cv_berufserfahrung', [])
-                all_education = st.session_state.get('cv_ausbildung', [])
-                all_training = st.session_state.get('cv_weiterbildungen', [])
-                
-                # Zusammenführen der bearbeiteten Daten
-                complete_edited_data = {
-                    "persönliche_daten": {
-                        "name": edited_data.get("name", ""),
-                        "wohnort": edited_data.get("wohnort", ""),
-                        "jahrgang": edited_data.get("jahrgang", ""),
-                        "führerschein": edited_data.get("führerschein", ""),
-                        "kontakt": {
-                            "ansprechpartner": edited_data.get("ansprechpartner", ""),
-                            "telefon": edited_data.get("telefon", ""),
-                            "email": edited_data.get("email", "")
-                        },
-                        "profile_image": st.session_state.get("profile_image_path", None)
-                    },
-                    "berufserfahrung": all_experience,
-                    "ausbildung": all_education,
-                    "weiterbildungen": all_training,
-                    "wunschgehalt": edited_data.get("wunschgehalt", ""),
+                contact_data_consolidated = {
+                    "ansprechpartner": edited_data.get("ansprechpartner", ""),
+                    "telefon": edited_data.get("telefon", ""),
+                    "email": edited_data.get("email", "")
+                }
+                availability_data_consolidated = {
                     "verfuegbarkeit_status": edited_data.get("verfuegbarkeit_status", "Sofort verfügbar"),
                     "verfuegbarkeit_details": edited_data.get("verfuegbarkeit_details", "")
                 }
+                
+                # Use modular data consolidation
+                complete_edited_data = cv_editor.get_consolidated_data(
+                    personal_data_consolidated, 
+                    contact_data_consolidated, 
+                    availability_data_consolidated
+                )
                 
                 # Speichern der bearbeiteten Daten in der Session
                 st.session_state.edited_data = complete_edited_data
@@ -610,22 +440,22 @@ if st.session_state.step == 1:
                 # Profil generieren und Vorschau anzeigen
                 st.markdown("### Profilvorschau und Export")
                 
-                # Zuerst prüfen, ob edited_data in der Session verfügbar ist und wenn nicht, initialisieren
+                # Initialize edited_data from profile_data if not present
                 if "edited_data" not in st.session_state:
-                    # Vorbereitete Daten für Tab2 erstellen
-                    complete_edited_data = {
-                        "persönliche_daten": {
-                            "name": profile_data.get("persönliche_daten", {}).get("name", ""),
-                            "wohnort": profile_data.get("persönliche_daten", {}).get("wohnort", ""),
-                            "jahrgang": profile_data.get("persönliche_daten", {}).get("jahrgang", ""),
-                            "führerschein": profile_data.get("persönliche_daten", {}).get("führerschein", ""),
-                            "kontakt": profile_data.get("persönliche_daten", {}).get("kontakt", {})
-                        },
-                        "berufserfahrung": profile_data.get("berufserfahrung", []),
-                        "ausbildung": profile_data.get("ausbildung", []),
-                        "weiterbildungen": profile_data.get("weiterbildungen", []),
-                        "wunschgehalt": profile_data.get("wunschgehalt", "")
-                    }
+                    # Use modular approach to initialize data
+                    personal_data = profile_data.get("persönliche_daten", {})
+                    contact_data = personal_data.get("kontakt", {})
+                    availability_data = {"verfuegbarkeit_status": "Sofort verfügbar", "verfuegbarkeit_details": ""}
+                    
+                    # Initialize CV data in session state
+                    cv_editor.initialize_session_state(profile_data)
+                    
+                    # Consolidate using modular approach
+                    complete_edited_data = cv_editor.get_consolidated_data(
+                        personal_data, contact_data, availability_data
+                    )
+                    complete_edited_data["wunschgehalt"] = profile_data.get("wunschgehalt", "")
+                    
                     # In Session State speichern
                     st.session_state.edited_data = complete_edited_data
                 
@@ -1077,80 +907,69 @@ if st.session_state.step == 1:
                         # E-Mail-Adresse anzeigen
                         st.text_input("E-Mail", value=email, disabled=True)
                     
-                    # CV-Daten-Editor
+                    # CV-Daten-Editor mit modularer Architektur
                     
-                    # Bereite die Daten vor
-                    cv_data = {
-                        'berufserfahrung': profile_data.get("berufserfahrung", []),
-                        'ausbildung': profile_data.get("ausbildung", []),
-                        'weiterbildungen': profile_data.get("weiterbildungen", [])
+                    # Initialize CV data in session state
+                    cv_editor.initialize_session_state(profile_data)
+                    
+                    # Render CV editing sections
+                    cv_editor.render_experience_editor()
+                    cv_editor.render_education_editor() 
+                    cv_editor.render_training_editor()
+                    
+                    # Consolidate data using the modular CVDataEditor
+                    personal_data_consolidated = {
+                        "name": edited_data.get("name", ""),
+                        "wohnort": edited_data.get("wohnort", ""),
+                        "jahrgang": edited_data.get("jahrgang", ""),
+                        "führerschein": edited_data.get("führerschein", ""),
+                        "wunschgehalt": edited_data.get("wunschgehalt", "")
                     }
-                    
-                    # Dropdown-basierter CV-Editor
-                    edited_cv_data = create_cv_data_editor(cv_data)
-                    
-                    # Aktualisierte Daten aus Session State verwenden (für persistente Sortierung)
-                    all_experience = st.session_state.get('cv_berufserfahrung', [])
-                    all_education = st.session_state.get('cv_ausbildung', [])
-                    all_training = st.session_state.get('cv_weiterbildungen', [])
-                    
-                    # Zusammenführen der bearbeiteten Daten
-                    complete_edited_data = {
-                        "persönliche_daten": {
-                            "name": edited_data.get("name", ""),
-                            "wohnort": edited_data.get("wohnort", ""),
-                            "jahrgang": edited_data.get("jahrgang", ""),
-                            "führerschein": edited_data.get("führerschein", ""),
-                            "kontakt": {
-                                "ansprechpartner": edited_data.get("ansprechpartner", ""),
-                                "telefon": edited_data.get("telefon", ""),
-                                "email": edited_data.get("email", "")
-                            },
-                            "profile_image": st.session_state.get("profile_image_path", None)
-                        },
-                        "berufserfahrung": all_experience,
-                        "ausbildung": all_education,
-                        "weiterbildungen": all_training,
-                        "wunschgehalt": edited_data.get("wunschgehalt", ""),
+                    contact_data_consolidated = {
+                        "ansprechpartner": edited_data.get("ansprechpartner", ""),
+                        "telefon": edited_data.get("telefon", ""),
+                        "email": edited_data.get("email", "")
+                    }
+                    availability_data_consolidated = {
                         "verfuegbarkeit_status": edited_data.get("verfuegbarkeit_status", "Sofort verfügbar"),
                         "verfuegbarkeit_details": edited_data.get("verfuegbarkeit_details", "")
                     }
                     
+                    # Use modular data consolidation
+                    complete_edited_data = cv_editor.get_consolidated_data(
+                        personal_data_consolidated, 
+                        contact_data_consolidated, 
+                        availability_data_consolidated
+                    )
+                    
                     # Speichern der bearbeiteten Daten in der Session
                     st.session_state.edited_data = complete_edited_data
                     
-                    # Prüfen auf Vollständigkeit der kritischen Daten
-                    validation_errors = []
-                    if not edited_data.get("name"):
-                        validation_errors.append("Name fehlt")
-                    if not edited_data.get("email") and not edited_data.get("telefon"):
-                        validation_errors.append("Mindestens eine Kontaktmöglichkeit (E-Mail oder Telefon) wird benötigt")
-                    
-                    # Wenn es Validierungsfehler gibt, diese anzeigen
+                    # Validate data using the modular CVDataEditor
+                    validation_errors = cv_editor.validate_data(complete_edited_data)
                     if validation_errors:
-                        for error in validation_errors:
-                            st.error(error)
+                        ErrorHandler.handle_validation_error(validation_errors, "Profildaten")
                 
                 with tab2:
                     # Profil generieren und Vorschau anzeigen
                     st.markdown("### Profilvorschau und Export")
                     
-                    # Zuerst prüfen, ob edited_data in der Session verfügbar ist und wenn nicht, initialisieren
+                    # Initialize edited_data from profile_data if not present
                     if "edited_data" not in st.session_state:
-                        # Vorbereitete Daten für Tab2 erstellen
-                        complete_edited_data = {
-                            "persönliche_daten": {
-                                "name": profile_data.get("persönliche_daten", {}).get("name", ""),
-                                "wohnort": profile_data.get("persönliche_daten", {}).get("wohnort", ""),
-                                "jahrgang": profile_data.get("persönliche_daten", {}).get("jahrgang", ""),
-                                "führerschein": profile_data.get("persönliche_daten", {}).get("führerschein", ""),
-                                "kontakt": profile_data.get("persönliche_daten", {}).get("kontakt", {})
-                            },
-                            "berufserfahrung": profile_data.get("berufserfahrung", []),
-                            "ausbildung": profile_data.get("ausbildung", []),
-                            "weiterbildungen": profile_data.get("weiterbildungen", []),
-                            "wunschgehalt": profile_data.get("wunschgehalt", "")
-                        }
+                        # Use modular approach to initialize data
+                        personal_data = profile_data.get("persönliche_daten", {})
+                        contact_data = personal_data.get("kontakt", {})
+                        availability_data = {"verfuegbarkeit_status": "Sofort verfügbar", "verfuegbarkeit_details": ""}
+                        
+                        # Initialize CV data in session state
+                        cv_editor.initialize_session_state(profile_data)
+                        
+                        # Consolidate using modular approach
+                        complete_edited_data = cv_editor.get_consolidated_data(
+                            personal_data, contact_data, availability_data
+                        )
+                        complete_edited_data["wunschgehalt"] = profile_data.get("wunschgehalt", "")
+                        
                         # In Session State speichern
                         st.session_state.edited_data = complete_edited_data
                     

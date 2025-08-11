@@ -17,6 +17,11 @@ from src.utils.company_config import get_company_config, get_company_logo_path
 import json
 from PIL import Image as PILImage
 
+# New modular imports
+from src.core.config_manager import LayoutConstants, AppConfig, PathManager
+from src.core.error_handler import ErrorHandler, safe_executor, ResourceManager
+from src.templates.base_template import BaseTableGenerator, SectionRenderer
+
 class ProfileGenerator:
     """Klasse zur Erstellung von PDF-Profilen im Classic Template Design"""
     
@@ -26,6 +31,13 @@ class ProfileGenerator:
         self.custom_styles = self._create_custom_styles()
         self.selected_company = selected_company
         self.company_config = get_company_config(selected_company)
+        
+        # Initialize new modular components
+        self.layout_constants = LayoutConstants()
+        self.app_config = AppConfig()
+        self.table_generator = BaseTableGenerator(self.custom_styles)
+        self.section_renderer = SectionRenderer(self.custom_styles, self.table_generator)
+        self.resource_manager = ResourceManager()
     
     def generate_profile(self, profile_data, output_path, template="classic", format="pdf"):
         """
@@ -807,10 +819,7 @@ class ProfileGenerator:
 
     def _get_dynamic_footer_text(self):
         """Gibt den dynamischen Footer-Text basierend auf dem ausgewählten Unternehmen zurück"""
-        if self.selected_company == "bejob":
-            return "bejob – einfach besser bewerben | Volksgartenstr. 85–89, 41065 Mönchengladbach | 02161 / 65326-40 | info@bejob.de | www.bejob.de"
-        else:
-            return "GALDORA Personalmanagement GmbH Co.KG\nVolksgartenstr. 85-89, 41065 Mönchengladbach\nE-Mail: info@galdora.de / Web: www.galdora.de"
+        return self.app_config.get_footer_text(self.selected_company)
 
 def check_missing_profile_data(profile_data):
     """Überprüft, ob wichtige Felder in den Profildaten fehlen"""

@@ -60,8 +60,8 @@ Der CV2Profile Parser-40 ist ein leistungsstarkes KI-gestütztes Tool zur automa
 - **src/utils/**: config.py, image_utils.py für Konfiguration und Bildverwaltung
 
 ### Deployment-Status
-- **GitHub Repository**: https://github.com/jjokkln/Parser-Streamlit-Host.git
-- **Branch**: new-v4 (deployment-ready)
+- **GitHub Repository**: https://github.com/Galdora-Personalmanagement/Galdora-Parser.git
+- **Branch**: main (deployment-ready)
 - **Streamlit Cloud**: Vorbereitet mit streamlit_app.py Entry Point
 - **Dependencies**: requirements.txt + packages.txt für Linux-Umgebung
 
