@@ -27,6 +27,33 @@ def create_pdfjs_viewer(pdf_path: str, height: int = 600) -> str:
         </div>
         """
     
+    # Leichtgewichtige Vorschau ohne PDF.js/BASE64 (speicherschonend)
+    a4_ratio = 297 / 210
+    viewer_width = 595
+    viewer_html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>PDF Vorschau (leicht)</title>
+        <style>
+            body { margin:0; padding:0; background:#f5f5f5; font-family: Arial, sans-serif; }
+            #container { width:{viewer_width}px; margin: 20px auto; }
+            #notice { background:white; padding:16px; border-radius:8px; text-align:center; }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="notice">
+                <h4>Vorschau deaktiviert (speicherschonend)</h4>
+                <p>Bitte nutzen Sie den Download-Button in der App, um die PDF zu öffnen.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return viewer_html
+
     # PDF-Datei als Base64 einlesen
     try:
         # Streamlit Cloud has tight RAM; avoid loading entire PDF when large.

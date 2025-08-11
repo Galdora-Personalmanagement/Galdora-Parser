@@ -51,10 +51,11 @@ class DocumentProcessor:
                 import tempfile
                 info = pdfinfo_from_path(file_path)
                 num_pages = int(info.get('Pages', 0))
+                max_pages = 5
                 if num_pages == 0:
-                    # Fallback: Einmalige Konvertierung versuchen
-                    images = convert_from_path(file_path, dpi=200, thread_count=1)
-                    for image in images:
+                    # Fallback: Einmalige Konvertierung versuchen (max. 5 Seiten), dpi reduziert
+                    images = convert_from_path(file_path, dpi=150, thread_count=1)
+                    for idx, image in enumerate(images):
                         try:
                             page_text = pytesseract.image_to_string(image, lang='deu')
                             text += page_text + "\n"
@@ -63,14 +64,17 @@ class DocumentProcessor:
                                 image.close()
                             except Exception:
                                 pass
+                        if idx + 1 >= max_pages:
+                            break
                 else:
                     # Seitenweise konvertieren, um RAM zu sparen
                     with tempfile.TemporaryDirectory() as tmpdir:
-                        for page in range(1, num_pages + 1):
+                        end_page = min(num_pages, max_pages)
+                        for page in range(1, end_page + 1):
                             try:
                                 paths = convert_from_path(
                                     file_path,
-                                    dpi=200,
+                                    dpi=150,
                                     first_page=page,
                                     last_page=page,
                                     output_folder=tmpdir,
