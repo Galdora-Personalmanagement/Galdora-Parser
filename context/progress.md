@@ -152,3 +152,9 @@ Letztes Update: 30. Juli 2025
 **PROJEKT-STATUS:** ✅ **100% DEPLOYMENT-READY & STABIL**
 
 **Bereit für den produktiven Einsatz auf Streamlit Cloud** 🚀
+
+---
+
+## Offene Aufgabe (Git Push auf Organisations-Repository)
+- Push auf `https://github.com/Galdora-Personalmanagement/Galdora-Parser.git` vorbereitet, aber wegen fehlender Berechtigung (HTTP 403 für Nutzer `jjokkln`) blockiert.
+- Benötigt: Schreibrechte für `jjokkln` oder PAT/SSH-Credentials der Organisation mit `repo`-Scope.
